@@ -1,5 +1,5 @@
+import PokemonTrainerForm from './components/Form/Form.js';
 import './index.css';
-import PokemonTrainerForm from './components/PokemontrainerForm/PokemonTrainerForm.jsx';
 
 function App() {
 	return <PokemonTrainerForm />;

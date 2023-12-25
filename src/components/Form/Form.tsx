@@ -6,18 +6,7 @@ import Button from '../Button';
 import PokemonModal from '../Modal';
 import Select from '../Select';
 import Input from '../Input';
-
-type Pokemon = {
-	name: string;
-	sprite: string;
-};
-
-type FormData = {
-	name: string;
-	lastName: string;
-	pokemon: string;
-	pokemons: object[];
-};
+import { Pokemon, FormData } from './types';
 
 const PokemonTrainerForm: React.FC = () => {
 	const {
@@ -32,6 +21,9 @@ const PokemonTrainerForm: React.FC = () => {
 	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [allPokemons, setAllPokemons] = useState<{ name: string }[]>([]);
+
+	const maxPokemonCount = 4;
+	const pokemonCount = maxPokemonCount - selectedPokemons.length;
 
 	useEffect(() => {
 		const selectedPokemonsFromLS = getItemFromLocalStorage('selectedPokemons');
@@ -117,7 +109,12 @@ const PokemonTrainerForm: React.FC = () => {
 				</label>
 
 				<label className='flex flex-col' htmlFor='pokemon'>
-					Select Your Pokémon Team:
+					{/* {pokemonCount === 4 ? '' : `${pokemonCount} left`} */}
+					{pokemonCount === 0
+						? 'Team is ready'
+						: pokemonCount === 4
+						? 'Select Your Pokémon Team:'
+						: `Select Your Pokémon Team: ${pokemonCount} left`}
 					<Controller
 						name='pokemon'
 						control={control}
