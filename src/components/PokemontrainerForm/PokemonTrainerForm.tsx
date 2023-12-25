@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import Button from '../Button';
 import { getAllPokemons, getPokemonDetails } from '../../../api/PokemonApi';
-import PokemonModal from '../PokemonModal/PokemonModal';
+import PokemonModal from '../Modal';
+import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/localStorege';
 
 interface Pokemon {
 	name: string;
@@ -14,39 +14,31 @@ interface FormData {
 	name: string;
 	lastName: string;
 	pokemon: string;
+	pokemons: object[];
 }
 
 const PokemonTrainerForm: React.FC = () => {
-	const { control, handleSubmit, setValue } = useForm<FormData>();
+	const {
+		control,
+		handleSubmit,
+		setValue,
+		formState: { errors },
+	} = useForm<FormData>({
+		mode: 'onChange',
+	});
+
 	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [allPokemons, setAllPokemons] = useState<{ name: string }[]>([]);
 
 	useEffect(() => {
+		const selectedPokemonsFromLS = getItemFromLocalStorage('selectedPokemons');
+
+		if (selectedPokemonsFromLS?.length) {
+			setSelectedPokemons(selectedPokemonsFromLS);
+		}
 		getAllPokemons().then((res) => setAllPokemons(res));
 	}, []);
-
-	// useEffect(() => {
-	// 	const handleModalCloseKeyDown = (e: KeyboardEvent) => {
-	// 		if (e.code === 'Escape') {
-	// 			closeModal();
-	// 		}
-	// 	};
-
-	// 	document.addEventListener('keydown', handleModalCloseKeyDown);
-	// 	document.body.style.overflow = 'hidden';
-
-	// 	return () => {
-	// 		document.removeEventListener('keydown', handleModalCloseKeyDown);
-	// 		document.body.style.overflow = 'visible';
-	// 	};
-	// }, []);
-
-	// const handleModalClose = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-	// 	if (e.currentTarget === e.target) {
-	// 		closeModal();
-	// 	}
-	// };
 
 	const handlePokemonSelection = async (selectedPokemonName: string) => {
 		try {
@@ -58,8 +50,11 @@ const PokemonTrainerForm: React.FC = () => {
 			};
 
 			if (selectedPokemon && selectedPokemons.length < 4) {
-				setSelectedPokemons([...selectedPokemons, selectedPokemon]);
-				setValue('pokemon', '');
+				const result = [...selectedPokemons, selectedPokemon];
+
+				setItemToLocalStorage('selectedPokemons', JSON.stringify(result));
+				setSelectedPokemons(result);
+				setValue('pokemons', result);
 			}
 		} catch (error) {
 			console.error('Error fetching Pokémon details:', error);
@@ -69,6 +64,8 @@ const PokemonTrainerForm: React.FC = () => {
 	const handleRemovePokemon = (pokemonName: string) => {
 		const updatedPokemons = selectedPokemons.filter((pokemon) => pokemon.name !== pokemonName);
 		setSelectedPokemons(updatedPokemons);
+		setValue('pokemons', updatedPokemons);
+		setItemToLocalStorage('selectedPokemons', JSON.stringify(updatedPokemons));
 	};
 
 	const openModal = () => {
@@ -92,7 +89,21 @@ const PokemonTrainerForm: React.FC = () => {
 						name='name'
 						control={control}
 						defaultValue=''
-						render={({ field }) => <input type='text' {...field} className='input' />}
+						rules={{
+							required: 'This field is required',
+							minLength: { value: 2, message: 'Name must be at least 2 characters long' },
+							maxLength: { value: 12, message: 'Name must not exceed 12 characters' },
+							pattern: {
+								value: /^[a-zA-Z]+$/,
+								message: 'Only characters from A-Z and a-z are accepted',
+							},
+						}}
+						render={({ field }) => (
+							<>
+								<input type='text' {...field} className='' />
+								{errors.name && <p>{errors.name.message}</p>}
+							</>
+						)}
 					/>
 				</div>
 
@@ -102,7 +113,21 @@ const PokemonTrainerForm: React.FC = () => {
 						name='lastName'
 						control={control}
 						defaultValue=''
-						render={({ field }) => <input type='text' {...field} className='input' />}
+						rules={{
+							required: 'This field is required',
+							minLength: { value: 2, message: 'Last name must be at least 2 characters long' },
+							maxLength: { value: 12, message: 'Last name must not exceed 12 characters' },
+							pattern: {
+								value: /^[a-zA-Z]+$/,
+								message: 'Only characters from A-Z and a-z are accepted',
+							},
+						}}
+						render={({ field }) => (
+							<>
+								<input type='text' {...field} className='' />
+								{errors.lastName && <p>{errors.lastName.message}</p>}
+							</>
+						)}
 					/>
 				</div>
 
@@ -115,7 +140,6 @@ const PokemonTrainerForm: React.FC = () => {
 						render={({ field }) => (
 							<select
 								{...field}
-								className='input'
 								disabled={selectedPokemons.length >= 4}
 								onChange={(e) => handlePokemonSelection(e.target.value)}
 							>
@@ -134,6 +158,7 @@ const PokemonTrainerForm: React.FC = () => {
 
 				<div>
 					<p>Your Pokémon Team:</p>
+					{!selectedPokemons.length && <p>Select 4 pokemons...</p>}
 					<ul>
 						{selectedPokemons.map((pokemon, index) => (
 							<li key={index}>
@@ -156,7 +181,7 @@ const PokemonTrainerForm: React.FC = () => {
 				</div>
 			</form>
 
-			{modalOpen && <PokemonModal closeModal={closeModal} selectedPokemons={selectedPokemons} />}
+			{modalOpen && <PokemonModal title='Your Pokémon Team' closeModal={closeModal} selectedItems={selectedPokemons} />}
 		</div>
 	);
 };

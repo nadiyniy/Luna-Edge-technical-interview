@@ -5,4 +5,6 @@ export type ButtonProps = {
 	type?: 'submit' | 'button';
 	className?: string;
 	disabled?: boolean;
+	foo?: () => void;
+	children?: any;
 };

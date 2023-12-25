@@ -1,6 +1,6 @@
 import { ButtonProps } from './types';
 
-const Button = ({ value, variant = 'primary', size = 'base', className, ...restProps }: ButtonProps) => {
+const Button = ({ value, variant = 'primary', size = 'base', className, foo, children, ...restProps }: ButtonProps) => {
 	const variantStyles = {
 		outline:
 			'border border-indigo-900 text-indigo-900 hover:bg-indigo-300 hover:text-indigo-500 hover:border-indigo-500 focus:border-2 focus:border-indigo-900 focus:bg-indigo-300 focus:text-indigo-900 disabled:opacity-40 disabled:text-indigo-900 disabled:bg-indigo-300 disabled:border-none disabled:cursor-default',
@@ -21,12 +21,12 @@ const Button = ({ value, variant = 'primary', size = 'base', className, ...restP
 		sizeStyles[size] || ''
 	} px-2 cursor-pointer`;
 
-	// Combine the base style with the provided className
 	const buttonStyle = `${baseStyle} ${className}`;
 
 	return (
-		<button className={buttonStyle} {...restProps}>
+		<button className={buttonStyle} onClick={foo} {...restProps}>
 			{value}
+			{children}
 		</button>
 	);
 };

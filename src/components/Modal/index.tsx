@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react';
 import Button from '../Button';
+import { ModalProps } from './types';
 
-interface PokemonModalProps {
-	closeModal: () => void;
-	selectedPokemons: { name: string; sprite: string }[];
-}
-
-const PokemonModal: React.FC<PokemonModalProps> = ({ selectedPokemons, closeModal }) => {
+const PokemonModal: React.FC<ModalProps> = ({ title, selectedItems, closeModal }) => {
 	useEffect(() => {
 		const handleModalCloseKeyDown = (e: KeyboardEvent) => {
 			if (e.code === 'Escape') {
@@ -32,12 +28,12 @@ const PokemonModal: React.FC<PokemonModalProps> = ({ selectedPokemons, closeModa
 	return (
 		<div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50' onClick={handleModalClose}>
 			<div className='bg-white p-8 max-w-md relative'>
-				<h2 className='text-2xl font-bold mb-4 '>Your Pokémon Team</h2>
+				<h2 className='text-2xl font-bold mb-4 '>{title}</h2>
 				<div className='flex space-x-4'>
-					{selectedPokemons.map((pokemon, index) => (
+					{selectedItems.map(({ name, sprite }, index) => (
 						<div key={index}>
-							<img src={pokemon.sprite} alt={pokemon.name} className='w-16 h-16' />
-							<p className='text-center'>{pokemon.name}</p>
+							<img src={sprite} alt={name} className='w-16 h-16' />
+							<p className='text-center'>{name}</p>
 						</div>
 					))}
 				</div>
