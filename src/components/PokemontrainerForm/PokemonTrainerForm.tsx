@@ -27,6 +27,7 @@ const PokemonTrainerForm: React.FC = () => {
 	} = useForm<FormData>({
 		mode: 'onChange',
 	});
+	console.log(errors);
 
 	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
@@ -82,10 +83,10 @@ const PokemonTrainerForm: React.FC = () => {
 	};
 
 	return (
-		<div className='max-w-lg mx-auto p-4'>
-			<form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
-				<div>
-					<label htmlFor='name'>Name:</label>
+		<>
+			<form className='flex gap-3 flex-col space-y-4 max-w-lg mx-auto p-4' onSubmit={handleSubmit(onSubmit)}>
+				<label className='flex flex-col' htmlFor='name'>
+					Name:
 					<Controller
 						name='name'
 						control={control}
@@ -100,16 +101,27 @@ const PokemonTrainerForm: React.FC = () => {
 							},
 						}}
 						render={({ field }) => (
-							<>
-								<input type='text' {...field} className='' />
-								{errors.name && <p>{errors.name.message}</p>}
-							</>
+							<div className='relative'>
+								<input
+									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300 border-2 
+            ${
+							errors.name
+								? 'border-red-500 outline-0'
+								: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
+						}`}
+									placeholder='Josh'
+									type='text'
+									{...field}
+								/>
+
+								{errors.name && <p className='absolute top-7 left-0 text-red-500'>{errors.name.message}</p>}
+							</div>
 						)}
 					/>
-				</div>
+				</label>
 
-				<div>
-					<label htmlFor='lastName'>Last Name:</label>
+				<label className='flex flex-col' htmlFor='lastName'>
+					Last Name:
 					<Controller
 						name='lastName'
 						control={control}
@@ -124,22 +136,33 @@ const PokemonTrainerForm: React.FC = () => {
 							},
 						}}
 						render={({ field }) => (
-							<>
-								<input type='text' {...field} className='' />
-								{errors.lastName && <p>{errors.lastName.message}</p>}
-							</>
+							<div className='relative'>
+								<input
+									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300 border-2 
+									${
+										errors.lastName
+											? 'border-red-500 outline-0'
+											: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
+									}`}
+									placeholder='Allen'
+									type='text'
+									{...field}
+								/>
+								{errors.lastName && <p className='absolute top-7 left-0 text-red-500'>{errors.lastName.message}</p>}
+							</div>
 						)}
 					/>
-				</div>
+				</label>
 
-				<div>
-					<label htmlFor='pokemon'>Select Your Pokémon Team:</label>
+				<label className='flex flex-col' htmlFor='pokemon'>
+					Select Your Pokémon Team:
 					<Controller
 						name='pokemon'
 						control={control}
 						defaultValue=''
 						render={({ field }) => (
 							<select
+								className='w-full hover:border-indigo-900 hover:outline-0 focus:border-indigo-900 focus:outline-0 rounded-md px-2 border-gray-300 border-2 '
 								{...field}
 								disabled={selectedPokemons.length >= 4}
 								onChange={(e) => handlePokemonSelection(e.target.value)}
@@ -155,7 +178,7 @@ const PokemonTrainerForm: React.FC = () => {
 							</select>
 						)}
 					/>
-				</div>
+				</label>
 
 				<p>Your Pokémon Team:</p>
 				{!selectedPokemons?.length ? (
@@ -169,11 +192,11 @@ const PokemonTrainerForm: React.FC = () => {
 					/>
 				)}
 
-				<Button disabled={!selectedPokemons.length} variant='primary' value='View Pokémon Team' />
+				<Button className='w-max' disabled={!selectedPokemons.length} variant='primary' value='View Pokémon Team' />
 			</form>
 
 			{modalOpen && <PokemonModal title='Your Pokémon Team' closeModal={closeModal} selectedItems={selectedPokemons} />}
-		</div>
+		</>
 	);
 };
 

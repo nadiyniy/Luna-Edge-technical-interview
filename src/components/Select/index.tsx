@@ -15,7 +15,7 @@ const Select = ({ items, selectedPokemons, setSelectedPokemons, setValue }: Sele
 
 	return (
 		<>
-			<ul>
+			<ul className='flex gap-2'>
 				{items.map(({ name }) => (
 					<li key={name}>
 						<Badge text={name} onBadgeClick={() => onBadgeClick(name)} />
