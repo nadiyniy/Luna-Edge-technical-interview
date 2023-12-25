@@ -27,7 +27,6 @@ const PokemonTrainerForm: React.FC = () => {
 	} = useForm<FormData>({
 		mode: 'onChange',
 	});
-	console.log(errors);
 
 	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
 	const [modalOpen, setModalOpen] = useState(false);
@@ -63,13 +62,6 @@ const PokemonTrainerForm: React.FC = () => {
 		}
 	};
 
-	const handleRemovePokemon = (pokemonName: string) => {
-		const updatedPokemons = selectedPokemons.filter((pokemon) => pokemon.name !== pokemonName);
-		setSelectedPokemons(updatedPokemons);
-		setValue('pokemons', updatedPokemons);
-		setItemToLocalStorage('selectedPokemons', JSON.stringify(updatedPokemons));
-	};
-
 	const openModal = () => {
 		setModalOpen(true);
 	};
@@ -81,6 +73,7 @@ const PokemonTrainerForm: React.FC = () => {
 	const onSubmit: SubmitHandler<FormData> = () => {
 		openModal();
 	};
+	console.log(selectedPokemons);
 
 	return (
 		<>
@@ -106,9 +99,9 @@ const PokemonTrainerForm: React.FC = () => {
 									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300 border-2 
             ${
 							errors.name
-								? 'border-red-500 outline-0'
+								? 'border-red-500 outline-0 placeholder-shown:border-red-500'
 								: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
-						}`}
+						} placeholder-shown:hover:border-indigo-900 placeholder-shown:focus:border-indigo-900`}
 									placeholder='Josh'
 									type='text'
 									{...field}
@@ -138,12 +131,12 @@ const PokemonTrainerForm: React.FC = () => {
 						render={({ field }) => (
 							<div className='relative'>
 								<input
-									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300 border-2 
+									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300   border-2 
 									${
 										errors.lastName
-											? 'border-red-500 outline-0'
+											? 'border-red-500 outline-0 placeholder-shown:border-red-500'
 											: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
-									}`}
+									} placeholder-shown:hover:border-indigo-900 placeholder-shown:focus:border-indigo-900`}
 									placeholder='Allen'
 									type='text'
 									{...field}
@@ -162,7 +155,7 @@ const PokemonTrainerForm: React.FC = () => {
 						defaultValue=''
 						render={({ field }) => (
 							<select
-								className='w-full hover:border-indigo-900 hover:outline-0 focus:border-indigo-900 focus:outline-0 rounded-md px-2 border-gray-300 border-2 '
+								className='w-full hover:border-indigo-900 hover:outline-0 focus:border-indigo-900 focus:outline-0 rounded-md px-2 border-gray-300 border-2 disabled:bg-gray-100 disabled:hover:border-gray-300'
 								{...field}
 								disabled={selectedPokemons.length >= 4}
 								onChange={(e) => handlePokemonSelection(e.target.value)}
@@ -192,7 +185,7 @@ const PokemonTrainerForm: React.FC = () => {
 					/>
 				)}
 
-				<Button className='w-max' disabled={!selectedPokemons.length} variant='primary' value='View Pokémon Team' />
+				<Button className='w-max' disabled={selectedPokemons.length < 4} variant='primary' value='View Pokémon Team' />
 			</form>
 
 			{modalOpen && <PokemonModal title='Your Pokémon Team' closeModal={closeModal} selectedItems={selectedPokemons} />}
