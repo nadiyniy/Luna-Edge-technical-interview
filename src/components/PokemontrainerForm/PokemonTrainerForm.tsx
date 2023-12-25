@@ -5,6 +5,7 @@ import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/lo
 import Button from '../Button';
 import PokemonModal from '../Modal';
 import Select from '../Select';
+import Input from '../Input';
 
 type Pokemon = {
 	name: string;
@@ -73,7 +74,6 @@ const PokemonTrainerForm: React.FC = () => {
 	const onSubmit: SubmitHandler<FormData> = () => {
 		openModal();
 	};
-	console.log(selectedPokemons);
 
 	return (
 		<>
@@ -93,23 +93,7 @@ const PokemonTrainerForm: React.FC = () => {
 								message: 'Only characters from A-Z and a-z are accepted',
 							},
 						}}
-						render={({ field }) => (
-							<div className='relative'>
-								<input
-									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300 border-2 
-            ${
-							errors.name
-								? 'border-red-500 outline-0 placeholder-shown:border-red-500'
-								: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
-						} placeholder-shown:hover:border-indigo-900 placeholder-shown:focus:border-indigo-900`}
-									placeholder='Josh'
-									type='text'
-									{...field}
-								/>
-
-								{errors.name && <p className='absolute top-7 left-0 text-red-500'>{errors.name.message}</p>}
-							</div>
-						)}
+						render={({ field }) => <Input field={field} errors={errors.name} />}
 					/>
 				</label>
 
@@ -128,22 +112,7 @@ const PokemonTrainerForm: React.FC = () => {
 								message: 'Only characters from A-Z and a-z are accepted',
 							},
 						}}
-						render={({ field }) => (
-							<div className='relative'>
-								<input
-									className={`w-full px-2 rounded-md placeholder-shown:border-gray-300   border-2 
-									${
-										errors.lastName
-											? 'border-red-500 outline-0 placeholder-shown:border-red-500'
-											: 'hover:border-indigo-900 focus:border-indigo-900 focus:outline-0 hover:outline-0 focus:outline-0 focus:border-green-900 hover:border-green-900 border-green-900'
-									} placeholder-shown:hover:border-indigo-900 placeholder-shown:focus:border-indigo-900`}
-									placeholder='Allen'
-									type='text'
-									{...field}
-								/>
-								{errors.lastName && <p className='absolute top-7 left-0 text-red-500'>{errors.lastName.message}</p>}
-							</div>
-						)}
+						render={({ field }) => <Input field={field} errors={errors.lastName} />}
 					/>
 				</label>
 
@@ -163,11 +132,17 @@ const PokemonTrainerForm: React.FC = () => {
 								<option value='' disabled>
 									Select Pokémon
 								</option>
-								{allPokemons.map((pokemon, index) => (
-									<option key={index} value={pokemon.name}>
-										{pokemon.name}
-									</option>
-								))}
+
+								{allPokemons.map((pokemon, index) => {
+									const isPokemonSelected = selectedPokemons.some(
+										(selectedPokemon) => selectedPokemon.name === pokemon.name
+									);
+									return (
+										<option key={index} value={pokemon.name} disabled={isPokemonSelected}>
+											{isPokemonSelected ? `${pokemon.name} (Selected)` : pokemon.name}
+										</option>
+									);
+								})}
 							</select>
 						)}
 					/>

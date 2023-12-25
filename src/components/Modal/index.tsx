@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Button from '../Button';
 import { ModalProps } from './types';
+import CloseIcon from '../../assets/icons/x-mark.svg';
 
 const PokemonModal: React.FC<ModalProps> = ({ title, selectedItems, closeModal }) => {
 	useEffect(() => {
@@ -37,7 +38,13 @@ const PokemonModal: React.FC<ModalProps> = ({ title, selectedItems, closeModal }
 						</div>
 					))}
 				</div>
-				<Button variant='text' value='X' size='sm' foo={closeModal} className='absolute top-5 right-5' />
+				<img
+					className='absolute top-5 right-5 cursor-pointer'
+					src={CloseIcon}
+					width={24}
+					height={24}
+					onClick={closeModal}
+				/>
 			</div>
 		</div>
 	);
