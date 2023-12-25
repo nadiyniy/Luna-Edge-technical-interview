@@ -1,3 +1,9 @@
+import { UseFormSetValue } from 'react-hook-form';
+import { Pokemon } from '../../../api/PokemonApi';
+
 export type SelectProps = {
-	example: string;
+	items: Pokemon[];
+	selectedPokemons: Pokemon[];
+	setSelectedPokemons: any;
+	setValue: UseFormSetValue<any>;
 };

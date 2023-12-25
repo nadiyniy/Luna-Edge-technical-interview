@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-interface Pokemon {
+export type Pokemon = {
 	name: string;
-	sprites: {
+	sprites?: {
 		front_default: string;
 	};
-}
+};
 
 export const getAllPokemons = async (): Promise<Pokemon[]> => {
 	try {

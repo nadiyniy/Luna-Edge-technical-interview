@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import Button from '../Button';
+import React, { useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { getAllPokemons, getPokemonDetails } from '../../../api/PokemonApi';
+import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/localStorage';
+import Button from '../Button';
 import PokemonModal from '../Modal';
-import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/localStorege';
+import Select from '../Select';
 
-interface Pokemon {
+type Pokemon = {
 	name: string;
 	sprite: string;
-}
+};
 
-interface FormData {
+type FormData = {
 	name: string;
 	lastName: string;
 	pokemon: string;
 	pokemons: object[];
-}
+};
 
 const PokemonTrainerForm: React.FC = () => {
 	const {
@@ -33,10 +34,10 @@ const PokemonTrainerForm: React.FC = () => {
 
 	useEffect(() => {
 		const selectedPokemonsFromLS = getItemFromLocalStorage('selectedPokemons');
-
 		if (selectedPokemonsFromLS?.length) {
 			setSelectedPokemons(selectedPokemonsFromLS);
 		}
+
 		getAllPokemons().then((res) => setAllPokemons(res));
 	}, []);
 
@@ -46,7 +47,7 @@ const PokemonTrainerForm: React.FC = () => {
 
 			const selectedPokemon: Pokemon = {
 				name: response.name,
-				sprite: response.sprites.front_default,
+				sprite: response?.sprites?.front_default || '',
 			};
 
 			if (selectedPokemon && selectedPokemons.length < 4) {
@@ -156,29 +157,19 @@ const PokemonTrainerForm: React.FC = () => {
 					/>
 				</div>
 
-				<div>
-					<p>Your Pokémon Team:</p>
-					{!selectedPokemons.length && <p>Select 4 pokemons...</p>}
-					<ul>
-						{selectedPokemons.map((pokemon, index) => (
-							<li key={index}>
-								{pokemon.name}
+				<p>Your Pokémon Team:</p>
+				{!selectedPokemons?.length ? (
+					<p>Select 4 pokemons...</p>
+				) : (
+					<Select
+						items={selectedPokemons}
+						selectedPokemons={selectedPokemons}
+						setSelectedPokemons={setSelectedPokemons}
+						setValue={setValue}
+					/>
+				)}
 
-								<Button
-									variant='outline'
-									type='button'
-									value='Remove'
-									size='xs'
-									foo={() => handleRemovePokemon(pokemon.name)}
-								/>
-							</li>
-						))}
-					</ul>
-				</div>
-
-				<div>
-					<Button disabled={!selectedPokemons.length} variant='primary' value='View Pokémon Team' />
-				</div>
+				<Button disabled={!selectedPokemons.length} variant='primary' value='View Pokémon Team' />
 			</form>
 
 			{modalOpen && <PokemonModal title='Your Pokémon Team' closeModal={closeModal} selectedItems={selectedPokemons} />}
