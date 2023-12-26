@@ -1,8 +1,8 @@
-import PokemonTrainerForm from './components/Form/Form.js';
-import './index.css';
+import Form from './components/Form/Form.js'
+import './index.css'
 
 function App() {
-	return <PokemonTrainerForm />;
+	return <Form />
 }
 
-export default App;
+export default App

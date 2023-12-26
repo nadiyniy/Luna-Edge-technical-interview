@@ -1,5 +1,7 @@
+import { Pokemon } from '../../../api/types'
+
 export type ModalProps = {
-	closeModal: () => void;
-	selectedItems: { name: string; sprite: string }[];
-	title: string;
-};
+	closeModal: () => void
+	selectedItems: Pokemon[]
+	title: string
+}

@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { getAllPokemons, getPokemonDetails } from '../../../api/PokemonApi';
-import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/localStorage';
-import Button from '../Button';
-import PokemonModal from '../Modal';
-import Select from '../Select';
-import Input from '../Input';
-import { Pokemon, FormData } from './types';
+import React, { useEffect, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { getAllPokemons, getPokemonDetails } from '../../../api/PokemonApi'
+import { getItemFromLocalStorage, setItemToLocalStorage } from '../../helpers/localStorage'
+import Button from '../Button'
+import Input from '../Input'
+import PokemonModal from '../Modal'
+import Select from '../Select'
+import { FormData } from './types'
+import { Pokemon } from '../../../api/types'
 
-const PokemonTrainerForm: React.FC = () => {
+const Form: React.FC = () => {
 	const {
 		control,
 		handleSubmit,
@@ -16,56 +17,56 @@ const PokemonTrainerForm: React.FC = () => {
 		formState: { errors },
 	} = useForm<FormData>({
 		mode: 'onChange',
-	});
+	})
 
-	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([]);
-	const [modalOpen, setModalOpen] = useState(false);
-	const [allPokemons, setAllPokemons] = useState<{ name: string }[]>([]);
+	const [selectedPokemons, setSelectedPokemons] = useState<Pokemon[]>([])
+	const [modalOpen, setModalOpen] = useState(false)
+	const [allPokemons, setAllPokemons] = useState<{ name: string }[]>([])
 
-	const maxPokemonCount = 4;
-	const pokemonCount = maxPokemonCount - selectedPokemons.length;
+	const maxPokemonCount = 4
+	const pokemonCount = maxPokemonCount - selectedPokemons.length
 
 	useEffect(() => {
-		const selectedPokemonsFromLS = getItemFromLocalStorage('selectedPokemons');
+		const selectedPokemonsFromLS = getItemFromLocalStorage('selectedPokemons')
 		if (selectedPokemonsFromLS?.length) {
-			setSelectedPokemons(selectedPokemonsFromLS);
+			setSelectedPokemons(selectedPokemonsFromLS)
 		}
 
-		getAllPokemons().then((res) => setAllPokemons(res));
-	}, []);
+		getAllPokemons().then(res => setAllPokemons(res))
+	}, [])
 
 	const handlePokemonSelection = async (selectedPokemonName: string) => {
 		try {
-			const response = await getPokemonDetails(selectedPokemonName);
+			const response = await getPokemonDetails(selectedPokemonName)
 
 			const selectedPokemon: Pokemon = {
 				name: response.name,
-				sprite: response?.sprites?.front_default || '',
-			};
+				sprites: response.sprites,
+			}
 
 			if (selectedPokemon && selectedPokemons.length < 4) {
-				const result = [...selectedPokemons, selectedPokemon];
+				const result = [...selectedPokemons, selectedPokemon]
 
-				setItemToLocalStorage('selectedPokemons', JSON.stringify(result));
-				setSelectedPokemons(result);
-				setValue('pokemons', result);
+				setItemToLocalStorage('selectedPokemons', JSON.stringify(result))
+
+				setSelectedPokemons(result)
 			}
 		} catch (error) {
-			console.error('Error fetching Pokémon details:', error);
+			console.error('Error fetching Pokémon details:', error)
 		}
-	};
+	}
 
 	const openModal = () => {
-		setModalOpen(true);
-	};
+		setModalOpen(true)
+	}
 
 	const closeModal = () => {
-		setModalOpen(false);
-	};
+		setModalOpen(false)
+	}
 
 	const onSubmit: SubmitHandler<FormData> = () => {
-		openModal();
-	};
+		openModal()
+	}
 
 	return (
 		<>
@@ -109,7 +110,6 @@ const PokemonTrainerForm: React.FC = () => {
 				</label>
 
 				<label className='flex flex-col' htmlFor='pokemon'>
-					{/* {pokemonCount === 4 ? '' : `${pokemonCount} left`} */}
 					{pokemonCount === 0
 						? 'Team is ready'
 						: pokemonCount === 4
@@ -124,7 +124,7 @@ const PokemonTrainerForm: React.FC = () => {
 								className='w-full hover:border-indigo-900 hover:outline-0 focus:border-indigo-900 focus:outline-0 rounded-md px-2 border-gray-300 border-2 disabled:bg-gray-100 disabled:hover:border-gray-300'
 								{...field}
 								disabled={selectedPokemons.length >= 4}
-								onChange={(e) => handlePokemonSelection(e.target.value)}
+								onChange={e => handlePokemonSelection(e.target.value)}
 							>
 								<option value='' disabled>
 									Select Pokémon
@@ -132,13 +132,13 @@ const PokemonTrainerForm: React.FC = () => {
 
 								{allPokemons.map((pokemon, index) => {
 									const isPokemonSelected = selectedPokemons.some(
-										(selectedPokemon) => selectedPokemon.name === pokemon.name
-									);
+										selectedPokemon => selectedPokemon.name === pokemon.name
+									)
 									return (
 										<option key={index} value={pokemon.name} disabled={isPokemonSelected}>
 											{isPokemonSelected ? `${pokemon.name} (Selected)` : pokemon.name}
 										</option>
-									);
+									)
 								})}
 							</select>
 						)}
@@ -146,7 +146,7 @@ const PokemonTrainerForm: React.FC = () => {
 				</label>
 
 				<p>Your Pokémon Team:</p>
-				{!selectedPokemons?.length ? (
+				{/* {!selectedPokemons?.length ? (
 					<p>Select 4 pokemons...</p>
 				) : (
 					<Select
@@ -155,14 +155,20 @@ const PokemonTrainerForm: React.FC = () => {
 						setSelectedPokemons={setSelectedPokemons}
 						setValue={setValue}
 					/>
-				)}
+				)} */}
+				<Select
+					items={selectedPokemons}
+					selectedPokemons={selectedPokemons}
+					setSelectedPokemons={setSelectedPokemons}
+					setValue={setValue}
+				/>
 
-				<Button className='w-max' disabled={selectedPokemons.length < 4} variant='primary' value='View Pokémon Team' />
+				<Button disabled={selectedPokemons.length < 4} variant='primary' value='View Pokémon Team' />
 			</form>
 
 			{modalOpen && <PokemonModal title='Your Pokémon Team' closeModal={closeModal} selectedItems={selectedPokemons} />}
 		</>
-	);
-};
+	)
+}
 
-export default PokemonTrainerForm;
+export default Form
