@@ -1,35 +1,37 @@
-import React, { useEffect } from 'react'
-import Button from '../Button'
-import { ModalProps } from './types'
-import CloseIcon from '../../assets/icons/x-mark.svg'
+import React, { useEffect } from 'react';
+import { ModalProps } from './types';
+import CloseIcon from '../../assets/icons/x-mark.svg';
 
-const PokemonModal: React.FC<ModalProps> = ({ title, selectedItems, closeModal }) => {
+const PokemonModal: React.FC<ModalProps> = ({ data, title, selectedItems, closeModal }) => {
 	useEffect(() => {
 		const handleModalCloseKeyDown = (e: KeyboardEvent) => {
 			if (e.code === 'Escape') {
-				closeModal()
+				closeModal();
 			}
-		}
+		};
 
-		document.addEventListener('keydown', handleModalCloseKeyDown)
-		document.body.style.overflow = 'hidden'
+		document.addEventListener('keydown', handleModalCloseKeyDown);
+		document.body.style.overflow = 'hidden';
 
 		return () => {
-			document.removeEventListener('keydown', handleModalCloseKeyDown)
-			document.body.style.overflow = 'visible'
-		}
-	}, [])
+			document.removeEventListener('keydown', handleModalCloseKeyDown);
+			document.body.style.overflow = 'visible';
+		};
+	}, []);
 
 	const handleModalClose = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		if (e.currentTarget === e.target) {
-			closeModal()
+			closeModal();
 		}
-	}
+	};
 
 	return (
 		<div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50' onClick={handleModalClose}>
 			<div className='bg-white p-8 max-w-md relative'>
-				<h2 className='text-2xl font-bold mb-4 '>{title}</h2>
+				<h2 className='text-2xl font-bold '>
+					{data.name} {data.lastName}
+				</h2>
+				<h2 className='text-2xl mb-4 '>{title}</h2>
 				<div className='flex space-x-4'>
 					{selectedItems.map(({ name, sprites }, index) => (
 						<div key={index}>
@@ -47,7 +49,7 @@ const PokemonModal: React.FC<ModalProps> = ({ title, selectedItems, closeModal }
 				/>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export default PokemonModal
+export default PokemonModal;

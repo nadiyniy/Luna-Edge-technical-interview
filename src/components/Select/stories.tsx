@@ -8,6 +8,8 @@ export default {
 
 export const Default = {
 	args: {
+		items: [],
+		selectedPokemons: [],
 		example: 'Example input',
 	},
 };

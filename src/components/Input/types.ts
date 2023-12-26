@@ -1,10 +1,13 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react'
 
-export type SelectProps = {
-	errors: { message?: string } | undefined;
-	field: {
-		value: string;
-		onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-		onBlur: () => void;
-	};
-};
+export type InputProps = {
+	errors?: { message?: string } | undefined
+	placeholder?: string
+	type: 'email' | 'text'
+	onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+	field?: {
+		value: string
+		onBlur: () => void
+	}
+	value?: string
+}
